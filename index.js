@@ -3,11 +3,11 @@ var inherits = require('inherits')
 var rowsView = require('./rows')
 var propertiesView = require('./properties')
 
-module.exports = DataTable
-inherits(DataTable, BaseElement)
+module.exports = DataGrid
+inherits(DataGrid, BaseElement)
 
-function DataTable (options) {
-  if (!(this instanceof DataTable)) return new DataTable(options)
+function DataGrid (options) {
+  if (!(this instanceof DataGrid)) return new DataGrid(options)
   options = options || {}
   BaseElement.call(this, options.el)
   this.rows = rowsView(options)
@@ -18,8 +18,8 @@ function DataTable (options) {
   })
 }
 
-DataTable.prototype.render = function (state) {
-  var vtree = this.html('div#data-table', this, [
+DataGrid.prototype.render = function (state) {
+  var vtree = this.html('div#data-grid', this, [
     this.properties.render(state.properties),
     this.rows.render(state.data)
   ])

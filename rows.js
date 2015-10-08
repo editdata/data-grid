@@ -6,10 +6,10 @@ module.exports = function rowsView (opts) {
   var rowHeight = opts.rowHeight || 30
   var height = window.innerHeight - rowHeight
   var options = extend({
-    className: 'data-table-rows',
+    className: 'data-grid-rows',
     rowHeight: rowHeight,
     eachrow: rows,
-    editable: true,
+    editable: false,
     properties: {},
     height: height
   }, opts)
@@ -61,7 +61,7 @@ module.exports = function rowsView (opts) {
       else if (typeof row.value[key] === 'boolean') value = row.value[key].toString()
       else value = row.value[key]
 
-      return list.html('li.data-table-value', propertyOptions, value)
+      return list.html('li.data-grid-value', propertyOptions, value)
     }
 
     var rowOptions = { attributes: { 'data-key': row.key } }
@@ -71,8 +71,8 @@ module.exports = function rowsView (opts) {
       rowOptions.attributes['data-active'] = 'true'
     }
 
-    return list.html('li.data-table-row', rowOptions, [
-      list.html('ul.data-table-row-items', elements)
+    return list.html('li.data-grid-row', rowOptions, [
+      list.html('ul.data-grid-row-items', elements)
     ])
   }
 

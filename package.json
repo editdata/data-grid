@@ -1,5 +1,5 @@
 {
-  "name": "data-table",
+  "name": "data-grid",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/editdata/data-table.git"
+    "url": "git+https://github.com/editdata/data-grid.git"
   },
   "author": "sethvincent",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/editdata/data-table/issues"
+    "url": "https://github.com/editdata/data-grid/issues"
   },
-  "homepage": "https://github.com/editdata/data-table#readme",
+  "homepage": "https://github.com/editdata/data-grid#readme",
   "dependencies": {
     "base-element": "^3.0.1",
     "data-set": "^4.0.0",

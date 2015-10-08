@@ -1,15 +1,15 @@
-#data-table {
+#data-grid {
   height: 100%;
   position: relative;
   overflow-x: scroll;
   overflow-y: hidden;
 }
 
-.data-table-properties {
+.data-grid-properties {
   
 }
 
-.data-table-rows {
+.data-grid-rows {
   margin: 0px;
   padding: 0px;
   overflow-x: hidden;
@@ -20,32 +20,32 @@
   margin-bottom: 40px;
 }
 
-.data-table-rows li.top,
-.data-table-rows li.bottom {
+.data-grid-rows li.top,
+.data-grid-rows li.bottom {
   list-style-type: none;
 }
 
-.data-table-row {
+.data-grid-row {
   list-style-type: none;
   height: 30px;
 }
 
-.data-table-row:last-child {
+.data-grid-row:last-child {
   border-bottom: 0px;
 }
 
-.data-table-row-items {
+.data-grid-row-items {
   margin: 0px;
   padding: 0px;
   height: 30px;
 }
 
-.data-table-row-items:hover {
+.data-grid-row-items:hover {
   background-color: #fcfcfc;
   cursor: pointer;
 }
 
-.data-table-value {
+.data-grid-value {
   height: 30px;
   width: 150px;
   min-height: 30px;
@@ -61,12 +61,12 @@
   color: #555;
 }
 
-.data-table-value:hover {
+.data-grid-value:hover {
   background-color: #f1f1ff;
   color: #333;
 }
 
-.data-table-value:last-child {
+.data-grid-value:last-child {
   border-right: 0px;
 }
 
@@ -74,14 +74,14 @@
   background-color: #f1f1ff;
 }
 
-.data-table-properties {
+.data-grid-properties {
   white-space: nowrap;
   margin: 0px;
   padding: 0px;
   height: 40px;
 }
 
-.data-table-property {
+.data-grid-property {
   width: 150px;
   height: 40px;
   line-height: 40px;
@@ -97,19 +97,19 @@
   cursor: pointer;
 }
 
-.data-table-property:hover {
+.data-grid-property:hover {
   
 }
 
-.data-table-property-name {
+.data-grid-property-name {
   color: #444;
 }
 
-.data-table-property:hover .data-table-property-name {
+.data-grid-property:hover .data-grid-property-name {
   color: #222;
 }
 
-.data-table-property-configure {
+.data-grid-property-configure {
   float: right;
   margin-top: 11px;
   margin-right: 0px;
@@ -121,11 +121,11 @@
   cursor: pointer;
 }
 
-.data-table-property:hover .data-table-property-configure {
+.data-grid-property:hover .data-grid-property-configure {
   display: inherit;
   c
 }
 
-.data-table-property-configure:hover {
+.data-grid-property-configure:hover {
   color: #222;
 }
