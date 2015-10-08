@@ -1,0 +1,131 @@
+#data-table {
+  height: 100%;
+  position: relative;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.data-table-properties {
+  
+}
+
+.data-table-rows {
+  margin: 0px;
+  padding: 0px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  position: absolute;
+  white-space: nowrap;
+  height: 100%;
+  margin-bottom: 40px;
+}
+
+.data-table-rows li.top,
+.data-table-rows li.bottom {
+  list-style-type: none;
+}
+
+.data-table-row {
+  list-style-type: none;
+  height: 30px;
+}
+
+.data-table-row:last-child {
+  border-bottom: 0px;
+}
+
+.data-table-row-items {
+  margin: 0px;
+  padding: 0px;
+  height: 30px;
+}
+
+.data-table-row-items:hover {
+  background-color: #fcfcfc;
+  cursor: pointer;
+}
+
+.data-table-value {
+  height: 30px;
+  width: 150px;
+  min-height: 30px;
+  max-height: 30px;
+  overflow: hidden;
+  resize: none;
+  padding: 0px 8px;
+  font-size: 12px;
+  line-height: 30px;
+  display: inline-block;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  color: #555;
+}
+
+.data-table-value:hover {
+  background-color: #f1f1ff;
+  color: #333;
+}
+
+.data-table-value:last-child {
+  border-right: 0px;
+}
+
+.active-cell {
+  background-color: #f1f1ff;
+}
+
+.data-table-properties {
+  white-space: nowrap;
+  margin: 0px;
+  padding: 0px;
+  height: 40px;
+}
+
+.data-table-property {
+  width: 150px;
+  height: 40px;
+  line-height: 40px;
+  padding: 0px 8px;
+  display: inline-block;
+  font-size: 15px;
+  list-style-type: none;
+  overflow-x: hidden;
+  font-weight: 700;
+  border-right: 1px solid #aaa;
+  border-bottom: 1px solid #888;
+  background-color: #fefefc;
+  cursor: pointer;
+}
+
+.data-table-property:hover {
+  
+}
+
+.data-table-property-name {
+  color: #444;
+}
+
+.data-table-property:hover .data-table-property-name {
+  color: #222;
+}
+
+.data-table-property-configure {
+  float: right;
+  margin-top: 11px;
+  margin-right: 0px;
+  font-size: 14px;
+  display: none;
+  border: 0px;
+  background: none;
+  padding: 0px;
+  cursor: pointer;
+}
+
+.data-table-property:hover .data-table-property-configure {
+  display: inherit;
+  c
+}
+
+.data-table-property-configure:hover {
+  color: #222;
+}
