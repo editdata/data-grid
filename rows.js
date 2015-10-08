@@ -9,7 +9,7 @@ module.exports = function rowsView (opts) {
     className: 'data-grid-rows',
     rowHeight: rowHeight,
     eachrow: rows,
-    editable: false,
+    readonly: true,
     properties: {},
     height: height
   }, opts)
@@ -23,36 +23,22 @@ module.exports = function rowsView (opts) {
     var elements = properties.map(element)
 
     function element (key) {
-      function getProperty (target) {
-        var property = {}
-        var ds = dataset(target)
-        property[ds.key] = value(target)
-        return property
-      }
-
       function onfocus (e) {
-        var property = getProperty(e.target)
-        list.send('focus', e, property, row)
+        list.send('focus', e, row, key, row.value[key])
       }
 
       function onblur (e) {
-        var property = getProperty(e.target)
-        list.send('blur', e, property, row)
+        list.send('blur', e, row, key, row.value[key])
       }
 
       function onclick (e) {
+        console.log('click is happening')
         list.send('click', e, row, key, row.value[key])
       }
 
-      var propertyOptions = {
-        id: 'cell-' + row.key + '-' + key,
-        attributes: {
-          'data-type': 'string', // todo: use property type from options.properties
-          'data-key': key
-        },
-        onfocus: onfocus,
-        onblur: onblur,
-        onclick: onclick
+      function oninput (e) {
+        row.value[key] = e.target.value
+        list.send('input', e, row, key, row.value[key])
       }
 
       var value
@@ -61,7 +47,28 @@ module.exports = function rowsView (opts) {
       else if (typeof row.value[key] === 'boolean') value = row.value[key].toString()
       else value = row.value[key]
 
-      return list.html('li.data-grid-value', propertyOptions, value)
+      var propertyOptions = {
+        value: value,
+        id: 'cell-' + row.key + '-' + key,
+        attributes: {
+          'data-type': 'string', // todo: use property type from options.properties
+          'data-key': key,
+          rows: 1
+        },
+        onfocus: onfocus,
+        onblur: onblur,
+        onclick: onclick,
+        oninput: oninput
+      }
+
+      if (list.readonly) {
+        propertyOptions.attributes.readonly = true
+      }
+
+      var classList = '.data-grid-value' + (list.readonly ? '.readonly' : '')
+      return list.html('li.data-grid-value-wrapper', [
+        list.html('textarea' + classList, propertyOptions)
+      ])
     }
 
     var rowOptions = { attributes: { 'data-key': row.key } }
