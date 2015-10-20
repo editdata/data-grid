@@ -17,7 +17,6 @@
   "homepage": "https://github.com/editdata/data-grid#readme",
   "dependencies": {
     "base-element": "^3.0.1",
-    "data-set": "^4.0.0",
     "extend": "^3.0.0",
     "inherits": "^2.0.1",
     "view-list": "^2.0.0"

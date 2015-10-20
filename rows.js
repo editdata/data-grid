@@ -1,5 +1,4 @@
 var ViewList = require('view-list')
-var dataset = require('data-set')
 var extend = require('extend')
 
 module.exports = function rowsView (opts) {
@@ -21,7 +20,7 @@ module.exports = function rowsView (opts) {
     if (!row.value) row.value = row.properties
     var properties = Object.keys(row.value)
     var elements = properties.map(element)
-
+    console.log(row)
     function element (key) {
       function onfocus (e) {
         list.send('focus', e, row, key, row.value[key])
@@ -32,7 +31,6 @@ module.exports = function rowsView (opts) {
       }
 
       function onclick (e) {
-        console.log('click is happening')
         list.send('click', e, row, key, row.value[key])
       }
 
