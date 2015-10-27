@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "style": "style.css",
-  "scripts": {},
+  "scripts": {
+    "bundle-example": "sheetify example/style.css > example/bundle.css",
+    "example": "budo example/index.js --dir example --live --onupdate 'npm run bundle-example'"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/editdata/data-grid.git"
@@ -17,8 +20,16 @@
   "homepage": "https://github.com/editdata/data-grid#readme",
   "dependencies": {
     "base-element": "^3.0.1",
+    "data-fields": "^1.0.0",
     "extend": "^3.0.0",
     "inherits": "^2.0.1",
     "view-list": "^2.0.0"
+  },
+  "devDependencies": {
+    "budo": "^5.1.5",
+    "data-editor": "github:editdata/data-editor",
+    "data-form": "github:editdata/data-form",
+    "data-format": "github:editdata/data-format",
+    "sheetify": "^2.0.3"
   }
 }

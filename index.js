@@ -17,7 +17,7 @@ function DataGrid (options) {
   this.rows.addEventListener('load', function (el) {
     el.style.height = (window.innerHeight - (options.offsetX || 35)) + 'px'
   })
-  
+
   this.rows.addEventListener('click', function (e, row, key, value) {
     self.send('click', e, row, key, value)
   })
@@ -38,7 +38,7 @@ function DataGrid (options) {
 DataGrid.prototype.render = function (state) {
   var vtree = this.html('div#data-grid', [
     this.properties.render(state.properties),
-    this.rows.render(state.data)
+    this.rows.render(state)
   ])
   return this.afterRender(vtree)
 }
