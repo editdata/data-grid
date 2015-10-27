@@ -45,7 +45,7 @@
   cursor: pointer;
 }
 
-.data-field {
+.data-grid-rows .data-field {
   font-size: 10px;
   border: 0px;
   padding: 0px 8px;
@@ -63,21 +63,21 @@
   border-bottom: 1px solid #ccc;
 }
 
-.data-field.readonly {
+.data-grid-rows .data-field.readonly {
   cursor: pointer;
   overflow: hidden;
 }
 
-.data-field:focus {
+.data-grid-rows .data-field:focus {
   background-color: #f1f1ff;
 }
 
-.data-field:hover {
+.data-grid-rows .data-field:hover {
   background-color: #f1f1ff;
   color: #333;
 }
 
-.data-field:last-child {
+.data-grid-rows .data-field:last-child {
   border-right: 0px;
 }
 
