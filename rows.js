@@ -14,7 +14,7 @@ function RowsView (options) {
     rowHeight: rowHeight,
     eachrow: function rows (row) {
       var self = this
-      console.log(row)
+
       if (row.id && !row.key) row.key = row.id
       if (!row.value) row.value = row.properties
       var properties = Object.keys(row.value)
@@ -85,6 +85,5 @@ inherits(RowsView, ViewList)
 RowsView.prototype.render = function rowsview_render (state) {
   this.properties = state.properties
   var view = ViewList.prototype.render.call(this, state.data)
-  console.log('huh', view)
   return this.afterRender(view)
 }
