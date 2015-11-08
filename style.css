@@ -28,6 +28,7 @@
 .data-grid-row {
   list-style-type: none;
   height: 30px;
+  border-right: 1px solid #ccc;
 }
 
 .data-grid-row:last-child {
@@ -75,10 +76,6 @@
 .data-grid-rows .data-field:hover {
   background-color: #f1f1ff;
   color: #333;
-}
-
-.data-grid-rows .data-field:last-child {
-  border-right: 0px;
 }
 
 .active-cell {
