@@ -33,6 +33,8 @@ function DataGrid (options) {
   this.rows.addEventListener('input', function (e, row, key, value) {
     self.send('input', e, row, key, value)
   })
+
+  this.on = this.addEventListener
 }
 
 DataGrid.prototype.render = function (state) {
