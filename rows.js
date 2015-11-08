@@ -22,7 +22,8 @@ function RowsView (options) {
 
       function element (key) {
         var prop = self.properties[key]
-        var type = prop.type[0] || 'string'
+        var type = prop.type[0]
+        if (type === 'undefined') type = 'string'
 
         function onfocus (e) {
           self.send('focus', e, row, key, row.value[key])
