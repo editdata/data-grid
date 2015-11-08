@@ -21,6 +21,9 @@ function RowsView (options) {
       var elements = properties.map(element)
 
       function element (key) {
+        var prop = self.properties[key]
+        var type = prop.type[0] || 'string'
+
         function onfocus (e) {
           self.send('focus', e, row, key, row.value[key])
         }
@@ -59,8 +62,8 @@ function RowsView (options) {
         }
 
         var h = self.html
-        var field = fields['string']()
-        return field.render(h, propertyOptions)
+        var field = fields[type]()
+        return field.render(h, propertyOptions, value)
       }
 
       var rowOptions = { attributes: { 'data-key': row.key } }

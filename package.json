@@ -20,16 +20,17 @@
   "homepage": "https://github.com/editdata/data-grid#readme",
   "dependencies": {
     "base-element": "^3.0.1",
+    "data-editor": "github:editdata/data-editor",
     "data-fields": "^2.0.0",
     "extend": "^3.0.0",
     "inherits": "^2.0.1",
     "view-list": "^2.0.0"
   },
   "devDependencies": {
-    "budo": "^5.1.5",
+    "budo": "^6.0.1",
     "data-editor": "github:editdata/data-editor",
     "data-form": "github:editdata/data-form",
-    "data-format": "github:editdata/data-format",
-    "sheetify": "^2.0.3"
+    "sheetify": "^2.0.3",
+    "virtual-raf": "^2.0.3"
   }
 }
