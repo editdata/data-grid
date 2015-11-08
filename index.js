@@ -39,7 +39,7 @@ function DataGrid (options) {
 
 DataGrid.prototype.render = function (state) {
   var vtree = this.html('div#data-grid', [
-    this.properties.render(state.properties),
+    this.properties.render(state),
     this.rows.render(state)
   ])
   return this.afterRender(vtree)

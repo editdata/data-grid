@@ -9,7 +9,8 @@ function PropertiesView (options) {
   BaseElement.call(this, options.el)
 }
 
-PropertiesView.prototype.render = function (properties) {
+PropertiesView.prototype.render = function (state) {
+  var properties = state.properties
   var self = this
   var items = []
 

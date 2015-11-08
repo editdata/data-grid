@@ -14,8 +14,8 @@ function RowsView (options) {
     rowHeight: rowHeight,
     eachrow: function rows (row) {
       var self = this
-
-      if (row.id && !row.key) row.key = row.id
+      if (!row) return
+      if (!row.key) row.key = row.id
       if (!row.value) row.value = row.properties || {}
       var properties = Object.keys(row.value)
       var elements = properties.map(element)
@@ -59,7 +59,8 @@ function RowsView (options) {
         }
 
         var h = self.html
-        return fields['string'](h, propertyOptions)
+        var field = fields['string']()
+        return field.render(h, propertyOptions)
       }
 
       var rowOptions = { attributes: { 'data-key': row.key } }
