@@ -118,8 +118,7 @@
 
 .data-grid-property-configure {
   float: right;
-  margin-top: 11px;
-  margin-right: 0px;
+  margin: 0px;
   font-size: 14px;
   display: none;
   border: 0px;
