@@ -41,7 +41,6 @@
 }
 
 .data-grid-row-items:hover {
-  background-color: #fcfcfc;
   cursor: pointer;
 }
 
@@ -68,18 +67,11 @@
   overflow: hidden;
 }
 
-.data-grid-rows .data-field:focus {
-  background-color: #f1f1ff;
-}
+.data-grid-rows .data-field:focus {}
 
-.data-grid-rows .data-field:hover {
-  background-color: #f1f1ff;
-  color: #333;
-}
+.data-grid-rows .data-field:hover {}
 
-.active-cell {
-  background-color: #f1f1ff;
-}
+.active-cell {}
 
 .data-grid-properties {
   white-space: nowrap;
@@ -100,7 +92,6 @@
   font-weight: 700;
   border-right: 1px solid #aaa;
   border-bottom: 1px solid #888;
-  background-color: #fefefc;
   cursor: pointer;
 }
 
