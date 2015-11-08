@@ -16,7 +16,7 @@ function RowsView (options) {
       var self = this
 
       if (row.id && !row.key) row.key = row.id
-      if (!row.value) row.value = row.properties
+      if (!row.value) row.value = row.properties || {}
       var properties = Object.keys(row.value)
       var elements = properties.map(element)
 
