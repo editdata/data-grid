@@ -28,7 +28,6 @@
 .data-grid-row {
   list-style-type: none;
   height: 30px;
-  border-right: 1px solid #ccc;
 }
 
 .data-grid-row:last-child {
