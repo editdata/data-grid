@@ -66,7 +66,6 @@ function modifyRow (options) {
       var prop = formatter.findProperty(properties, key)
       var type = prop.type[0]
       if (type === 'undefined') type = 'string'
-      console.log(prop)
       var value = row.value[key]
 
       var propertyOptions = {

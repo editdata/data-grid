@@ -4,9 +4,7 @@ var editor = require('data-editor')()
 var grid = require('../index')
 
 var data = editor.init(require('./data.json'))
-console.log(data)
 function render (state) {
-  console.log(state.dataset)
   return grid(h, state.dataset)
 }
 
