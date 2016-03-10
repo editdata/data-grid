@@ -1,94 +1,105 @@
 var ViewList = require('view-list')
-var extend = require('extend')
-var inherits = require('inherits')
 var fields = require('data-fields')
+var formatter = require('data-format')()
 
-function RowsView (options) {
-  if (!(this instanceof RowsView)) return new RowsView(options)
-
+module.exports = function RowsComponent (options) {
   var rowHeight = options.rowHeight || 30
   var height = window.innerHeight - rowHeight
-  ViewList.call(this, options)
-  extend(this, {
+
+  var viewList = ViewList({
     className: 'data-grid-rows',
     rowHeight: rowHeight,
-    eachrow: function rows (row) {
-      var self = this
-      if (!row) return
-      if (!row.key) row.key = row.id
-      if (!row.value) row.value = row.properties || {}
-      var properties = Object.keys(row.value)
-      var elements = properties.map(element)
-
-      function element (key) {
-        var prop = self.properties[key]
-        var type = prop.type[0]
-        if (type === 'undefined') type = 'string'
-
-        function onfocus (e) {
-          self.send('focus', e, row, key, row.value[key])
-        }
-
-        function onblur (e) {
-          self.send('blur', e, row, key, row.value[key])
-        }
-
-        function onclick (e) {
-          self.send('click', e, row, key, row.value[key])
-        }
-
-        function oninput (e) {
-          row.value[key] = e.target.value
-          self.send('input', e, row, key, row.value[key])
-        }
-
-        var value = row.value[key]
-
-        var propertyOptions = {
-          value: value,
-          id: 'cell-' + row.key + '-' + key,
-          attributes: {
-            'data-type': 'string', // todo: use property type from options.properties
-            'data-key': key,
-            rows: 1
-          },
-          onfocus: onfocus,
-          onblur: onblur,
-          onclick: onclick,
-          oninput: oninput
-        }
-
-        if (self.readonly) {
-          propertyOptions.attributes.readonly = true
-        }
-
-        var h = self.html
-        var field = fields[type]()
-        return field.render(h, propertyOptions, value)
-      }
-
-      var rowOptions = { attributes: { 'data-key': row.key } }
-
-      if (row.active) {
-        rowOptions.className = 'active'
-        rowOptions.attributes['data-active'] = 'true'
-      }
-
-      return self.html('li.data-grid-row', rowOptions, [
-        self.html('.data-grid-row-items', elements)
-      ])
-    },
+    eachrow: modifyRow(options),
     readonly: true,
     properties: {},
     height: height
-  }, options)
+  })
+
+  return viewList.render(options.data)
 }
 
-module.exports = RowsView
-inherits(RowsView, ViewList)
+/**
+ * Apply this function to each row
+ * @param  {Object} options
+ * @return {Function}
+ */
+function modifyRow (options) {
+  var h = options.h
+  var onfocus = options.onfocus
+  var onblur = options.onblur
+  var onclick = options.onclick
+  var oninput = options.oninput
+  var properties = options.properties
 
-RowsView.prototype.render = function rowsview_render (state) {
-  this.properties = state.properties
-  var view = ViewList.prototype.render.call(this, state.data)
-  return this.afterRender(view)
+  function onFocus (rowKey, propertyKey) {
+    return function (event) {
+      if (onfocus) return onfocus(event, rowKey, propertyKey)
+    }
+  }
+
+  function onBlur (rowKey, propertyKey) {
+    return function (event) {
+      if (onblur) return onblur(event, rowKey, propertyKey)
+    }
+  }
+
+  function onClick (rowKey, propertyKey) {
+    return function (event) {
+      if (onclick) return onclick(event, rowKey, propertyKey)
+    }
+  }
+
+  function onInput (rowKey, propertyKey) {
+    return function (event) {
+      if (oninput) return oninput(event, rowKey, propertyKey)
+    }
+  }
+
+  return function eachRow (row) {
+    if (!row) return
+    if (!row.key) row.key = row.id
+    if (!row.value) row.value = row.properties || {}
+    var propertyKeys = Object.keys(row.value)
+    var elements = propertyKeys.map(element)
+
+    function element (key) {
+      var prop = formatter.findProperty(properties, key)
+      var type = prop.type[0]
+      if (type === 'undefined') type = 'string'
+      console.log(prop)
+      var value = row.value[key]
+
+      var propertyOptions = {
+        h: h,
+        value: value,
+        id: 'cell-' + row.key + '-' + key,
+        attributes: {
+          'data-type': type, // todo: use property type from options.properties
+          'data-key': key,
+          rows: 1
+        },
+        onfocus: onFocus(row.key, key),
+        onblur: onBlur(row.key, key),
+        onclick: onClick(row.key, key),
+        oninput: onInput(row.key, key)
+      }
+
+      if (options.readonly) {
+        propertyOptions.attributes.readonly = true
+      }
+      var field = fields[type]
+      return field(h, propertyOptions)
+    }
+
+    var rowOptions = { attributes: { 'data-key': row.key } }
+
+    if (row.active) {
+      rowOptions.className = 'active'
+      rowOptions.attributes['data-active'] = 'true'
+    }
+
+    return h('li.data-grid-row', rowOptions, [
+      h('.data-grid-row-items', elements)
+    ])
+  }
 }

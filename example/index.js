@@ -1,12 +1,13 @@
 var vraf = require('virtual-raf')
 var h = require('virtual-dom/h')
 var editor = require('data-editor')()
-var grid = require('../index')()
+var grid = require('../index')
 
 var data = editor.init(require('./data.json'))
-
+console.log(data)
 function render (state) {
-  return grid.render(state.dataset)
+  console.log(state.dataset)
+  return grid(h, state.dataset)
 }
 
 var initialState = {

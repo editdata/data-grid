@@ -21,9 +21,10 @@
   "dependencies": {
     "base-element": "^3.0.1",
     "data-editor": "github:editdata/data-editor",
-    "data-fields": "^2.0.0",
+    "data-fields": "github:editdata/data-fields",
     "extend": "^3.0.0",
     "inherits": "^2.0.1",
+    "vdom-thunk": "^3.0.0",
     "view-list": "^2.0.0"
   },
   "devDependencies": {

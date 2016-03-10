@@ -1,46 +1,32 @@
-var BaseElement = require('base-element')
-var inherits = require('inherits')
-var rowsView = require('./rows')
-var propertiesView = require('./properties')
+var Thunk = require('vdom-thunk')
+var RowsComponent = require('./rows')
+var PropertiesComponent = require('./properties')
 
 module.exports = DataGrid
-inherits(DataGrid, BaseElement)
 
-function DataGrid (options) {
-  if (!(this instanceof DataGrid)) return new DataGrid(options)
-  options = options || {}
-  BaseElement.call(this, options.el)
-  var self = this
+function DataGrid (h, options) {
+  var propertiesOptions = {
+    properties: options.properties,
+    onmouseover: options.onmouseover,
+    onmouseout: options.onmouseout,
+    onconfigure: options.onconfigure,
+    h: h
+  }
 
-  this.rows = rowsView(options)
-  this.properties = propertiesView(options)
-  this.rows.addEventListener('load', function (el) {
-    el.style.height = (window.innerHeight - (options.offsetX || 35)) + 'px'
-  })
+  var rowsOptions = {
+    readonly: options.readonly,
+    data: options.data,
+    rowHeight: options.rowHeight,
+    onfocus: options.onfocus,
+    onblur: options.onblur,
+    onclick: options.onclick,
+    oninput: options.oninput,
+    properties: options.properties,
+    h: h
+  }
 
-  this.rows.addEventListener('click', function (e, row, key, value) {
-    self.send('click', e, row, key, value)
-  })
-
-  this.rows.addEventListener('focus', function (e, row, key, value) {
-    self.send('focus', e, row, key, value)
-  })
-
-  this.rows.addEventListener('blur', function (e, row, key, value) {
-    self.send('blur', e, row, key, value)
-  })
-
-  this.rows.addEventListener('input', function (e, row, key, value) {
-    self.send('input', e, row, key, value)
-  })
-
-  this.on = this.addEventListener
-}
-
-DataGrid.prototype.render = function (state) {
-  var vtree = this.html('div#data-grid', [
-    this.properties.render(state),
-    this.rows.render(state)
+  return h('div#data-grid', [
+    Thunk(PropertiesComponent, propertiesOptions),
+    Thunk(RowsComponent, rowsOptions)
   ])
-  return this.afterRender(vtree)
 }

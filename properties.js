@@ -1,31 +1,43 @@
-var BaseElement = require('base-element')
-var inherits = require('inherits')
-
 module.exports = PropertiesView
-inherits(PropertiesView, BaseElement)
 
 function PropertiesView (options) {
-  if (!(this instanceof PropertiesView)) return new PropertiesView(options)
-  BaseElement.call(this, options.el)
-}
-
-PropertiesView.prototype.render = function (state) {
-  var properties = state.properties
-  var self = this
+  var properties = options.properties
+  var onmouseover = options.onmouseover
+  var onmouseout = options.onmouseout
+  var onconfigure = options.onconfigure
+  var h = options.h
   var items = []
+
+  function onMouseOver (propertyKey) {
+    return function (event) {
+      if (onmouseover) onmouseover(event, propertyKey)
+    }
+  }
+
+  function onMouseOut (propertyKey) {
+    return function (event) {
+      if (onmouseout) onmouseout(event, propertyKey)
+    }
+  }
+
+  function onConfigure (propertyKey) {
+    return function (event) {
+      if (onconfigure) onconfigure(event, propertyKey)
+    }
+  }
 
   Object.keys(properties).forEach(function (key) {
     var property = properties[key]
-    items.push(self.html('li#' + property.key + '.data-grid-property', [
-      self.html('span.data-grid-property-name', property.name),
-      self.html('button.data-grid-property-configure.small', {
-        onclick: function (e) {
-          self.send('property:configure')
-        }
-      }, self.html('i.fa.fa-gear', ''))
+    items.push(h('li#' + property.key + '.data-grid-property', [
+      h('span.data-grid-property-name', {
+        onmouseover: onMouseOver(key),
+        onmouseout: onMouseOut(key)
+      }, property.name),
+      h('button.data-grid-property-configure.small', {
+        onclick: onConfigure(key)
+      }, h('i.fa.fa-gear', ''))
     ]))
   })
 
-  var vtree = this.html('ul.data-grid-properties', this, items)
-  return this.afterRender(vtree)
+  return h('ul.data-grid-properties', { className: options.className }, items)
 }
