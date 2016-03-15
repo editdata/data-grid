@@ -5,7 +5,7 @@
   "main": "index.js",
   "style": "style.css",
   "scripts": {
-    "bundle-example": "sheetify example/style.css > example/bundle.css",
+    "bundle-example": "postcss -u autoprefixer -u postcss-import example/style.css > example/bundle.css",
     "example": "budo example/index.js --dir example --live --onupdate 'npm run bundle-example'"
   },
   "repository": {
@@ -19,8 +19,6 @@
   },
   "homepage": "https://github.com/editdata/data-grid#readme",
   "dependencies": {
-    "base-element": "^3.0.1",
-    "data-editor": "github:editdata/data-editor",
     "data-fields": "github:editdata/data-fields",
     "extend": "^3.0.0",
     "inherits": "^2.0.1",
@@ -28,10 +26,13 @@
     "view-list": "^2.0.0"
   },
   "devDependencies": {
-    "budo": "^6.0.1",
+    "autoprefixer": "^6.3.3",
+    "budo": "^8.1.0",
     "data-editor": "github:editdata/data-editor",
     "data-form": "github:editdata/data-form",
-    "sheetify": "^2.0.3",
-    "virtual-raf": "^2.0.3"
+    "data-format": "github:editdata/data-format",
+    "postcss-cli": "^2.5.1",
+    "postcss-import": "^8.0.2",
+    "virtual-app": "^3.0.0"
   }
 }

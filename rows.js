@@ -15,7 +15,10 @@ module.exports = function RowsComponent (options) {
     height: height
   })
 
-  return viewList.render(options.data)
+  var node = viewList.render(options.data)
+  // HACK: Virtual-dom's diffing gets caught in infinite loop without key
+  node.key = Math.random()
+  return node
 }
 
 /**
@@ -45,6 +48,7 @@ function modifyRow (options) {
 
   function onClick (rowKey, propertyKey) {
     return function (event) {
+      console.log('there')
       if (onclick) return onclick(event, rowKey, propertyKey)
     }
   }
@@ -86,6 +90,7 @@ function modifyRow (options) {
       if (options.readonly) {
         propertyOptions.attributes.readonly = true
       }
+
       var field = fields[type]
       return field(h, propertyOptions)
     }
