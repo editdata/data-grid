@@ -48,7 +48,6 @@ function modifyRow (options) {
 
   function onClick (rowKey, propertyKey) {
     return function (event) {
-      console.log('there')
       if (onclick) return onclick(event, rowKey, propertyKey)
     }
   }
