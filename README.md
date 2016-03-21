@@ -2,6 +2,8 @@
 
 Simple & performant grid editor/viewer for data.
 
+[View an online demo.](http://about.editdata.org/data-grid/)
+
 ## See also
 
 - [data-editor](https://github.com/editdata/data-editor) – base editor that works with data-grid
