@@ -22,6 +22,8 @@ function DataGrid (h, options) {
     onclick: options.onclick,
     oninput: options.oninput,
     properties: options.properties,
+    activeRowKey: options.activeRowKey,
+    activePropertyKey: options.activePropertyKey,
     h: h
   }
 

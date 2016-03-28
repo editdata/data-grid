@@ -33,6 +33,8 @@ function modifyRow (options) {
   var onclick = options.onclick
   var oninput = options.oninput
   var properties = options.properties
+  var activeRowKey = options.activeRowKey
+  var activePropertyKey = options.activePropertyKey
 
   function onFocus (rowKey, propertyKey) {
     return function (event) {
@@ -62,6 +64,7 @@ function modifyRow (options) {
     if (!row) return
     if (!row.key) row.key = row.id
     if (!row.value) row.value = row.properties || {}
+    var active = activeRowKey === row.key
     var propertyKeys = Object.keys(row.value)
     var elements = propertyKeys.map(element)
 
@@ -86,6 +89,10 @@ function modifyRow (options) {
         oninput: onInput(row.key, key)
       }
 
+      if (active && key === activePropertyKey) {
+        propertyOptions.className = 'active'
+      }
+
       if (options.readonly) {
         propertyOptions.attributes.readonly = true
       }
@@ -94,14 +101,17 @@ function modifyRow (options) {
       return field(h, propertyOptions)
     }
 
-    var rowOptions = { attributes: { 'data-key': row.key } }
+    var rowOptions = {
+      className: 'data-grid-row',
+      attributes: { 'data-key': row.key }
+    }
 
-    if (row.active) {
-      rowOptions.className = 'active'
+    if (active) {
+      rowOptions.className = 'data-grid-row active'
       rowOptions.attributes['data-active'] = 'true'
     }
 
-    return h('li.data-grid-row', rowOptions, [
+    return h('li', rowOptions, [
       h('.data-grid-row-items', elements)
     ])
   }
