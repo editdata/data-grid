@@ -1,32 +1,12 @@
-var ViewList = require('view-list')
 var fields = require('data-fields')
 var formatter = require('data-format')()
-
-module.exports = function RowsComponent (options) {
-  var rowHeight = options.rowHeight || 30
-  var height = window.innerHeight - rowHeight
-
-  var viewList = ViewList({
-    className: 'data-grid-rows',
-    rowHeight: rowHeight,
-    eachrow: modifyRow(options),
-    readonly: true,
-    properties: {},
-    height: height
-  })
-
-  var node = viewList.render(options.data)
-  // HACK: Virtual-dom's diffing gets caught in infinite loop without key
-  node.key = Math.random()
-  return node
-}
 
 /**
  * Apply this function to each row
  * @param  {Object} options
  * @return {Function}
  */
-function modifyRow (options) {
+module.exports = function Row (options) {
   var h = options.h
   var onfocus = options.onfocus
   var onblur = options.onblur
