@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/editdata/data-grid#readme",
   "dependencies": {
-    "data-fields": "^3.0.0",
+    "data-fields": "^4.0.0",
     "extend": "^3.0.0",
     "vdom-thunk": "^3.0.0",
     "view-list": "^2.0.0"
