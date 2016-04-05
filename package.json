@@ -1,6 +1,6 @@
 {
   "name": "data-grid",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "",
   "main": "index.js",
   "style": "style.css",
@@ -24,7 +24,8 @@
   },
   "homepage": "https://github.com/editdata/data-grid#readme",
   "dependencies": {
-    "data-fields": "^4.0.0",
+    "data-fields": "^5.0.0",
+    "deep-diff": "^0.3.3",
     "extend": "^3.0.0",
     "vdom-thunk": "^3.0.0",
     "view-list": "^2.0.0"

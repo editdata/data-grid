@@ -15,6 +15,7 @@ module.exports = function Row (options) {
   var properties = options.properties
   var activeRowKey = options.activeRowKey
   var activePropertyKey = options.activePropertyKey
+  var editable = options.editable || false
 
   function onFocus (rowKey, propertyKey) {
     return function (event) {
@@ -54,6 +55,9 @@ module.exports = function Row (options) {
       if (type === 'undefined') type = 'string'
       var value = row.value[key]
 
+      // avoid rendering `null` when field is not editable
+      value = (!value && !editable) ? '' : value
+
       var propertyOptions = {
         h: h,
         value: value,
@@ -63,6 +67,7 @@ module.exports = function Row (options) {
           'data-key': key,
           rows: 1
         },
+        editable: editable,
         onfocus: onFocus(row.key, key),
         onblur: onBlur(row.key, key),
         onclick: onClick(row.key, key),
@@ -73,7 +78,7 @@ module.exports = function Row (options) {
         propertyOptions.className = 'active'
       }
 
-      if (options.readonly) {
+      if (!options.editable) {
         propertyOptions.attributes.readonly = true
       }
 
