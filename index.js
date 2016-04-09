@@ -69,22 +69,18 @@ DataGrid.prototype.update = function (prev, el) {
   var rowsDiff = diffRows(this.state, prev.state)
   var propertiesDiff = diffProperties(this.state, prev.state)
 
-  if (!rowsDiff && !propertiesDiff) return
+  var oldRows = el.querySelector('.data-grid-rows')
+  var newRows = createElement(this.viewList.render(this.state.data))
+  oldRows.parentElement.replaceChild(newRows, oldRows)
 
-  if (rowsDiff) {
-    var oldRows = el.querySelector('.data-grid-rows')
-    var newRows = createElement(this.viewList.render(this.state.data))
-    oldRows.parentElement.replaceChild(newRows, oldRows)
+  if (!this.state.activeRowKey && prev.state.activeRowKey) {
+    var prevActiveRow = newRows.querySelector('li[data-key="' + prev.state.activeRowKey + '"]')
+    if (prevActiveRow) newRows.scrollTop = prevActiveRow.offsetTop
+  }
 
-    if (!this.state.activeRowKey && prev.state.activeRowKey) {
-      var prevActiveRow = newRows.querySelector('li[data-key="' + prev.state.activeRowKey + '"]')
-      if (prevActiveRow) newRows.scrollTop = prevActiveRow.offsetTop
-    }
-
-    if (this.state.activeRowKey) {
-      var activeRow = newRows.querySelector('.active')
-      if (activeRow) newRows.scrollTop = activeRow.offsetTop
-    }
+  if (this.state.activeRowKey) {
+    var activeRow = newRows.querySelector('.active')
+    if (activeRow) newRows.scrollTop = activeRow.offsetTop
   }
 
   if (propertiesDiff) {
