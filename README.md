@@ -4,7 +4,7 @@ Simple & performant grid editor/viewer for data.
 
 [![npm](https://img.shields.io/npm/v/data-grid.svg)](http://npmjs.com/data-grid)
 
-[View an online demo.](http://about.editdata.org/data-grid/)
+[View an online demo.](http://editdata.github.io/data-grid/)
 
 ## See also
 
