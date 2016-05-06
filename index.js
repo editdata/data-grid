@@ -1,115 +1,203 @@
-var createElement = require('virtual-dom/create-element')
-var h = require('virtual-dom/h')
-var diff = require('deep-diff')
-var ViewList = require('view-list')
-var RowsComponent = require('./rows')
-var PropertiesComponent = require('./properties')
+var el = require('yo-yo')
+var css = require('sheetify')
+var domcss = require('dom-css')
 
-var DataGrid = function (state) {
-  if (!(this instanceof DataGrid)) return new DataGrid(state)
-  this.state = state
-  this.state.h = h
+/*
+* Experiment with yo-yo.js
+* Based on https://github.com/shama/csv-viewer
+*/
 
-  // Initialize Rows
-  var rowHeight = state.rowHeight || 30
-  var height = window.innerHeight - rowHeight
+module.exports = function createDataGrid (options) {
+  var headers = createHeaders(options)
+  var rows = createRows(options)
 
-  var rowsOptions = {
-    readonly: state.readonly,
-    data: state.data,
-    rowHeight: state.rowHeight,
-    onfocus: state.onfocus,
-    onblur: state.onblur,
-    onclick: state.onclick,
-    oninput: state.oninput,
-    properties: state.properties,
-    activeRowKey: state.activeRowKey,
-    activePropertyKey: state.activePropertyKey,
-    h: h
+  var prefix = css`
+    :host {
+      height: 100%;
+      position: relative;
+      overflow-x: scroll;
+      overflow-y: hidden;
+    }
+  `
+
+  function render (state, send) {
+    return el`<div class="data-grid ${prefix}">
+      ${headers(state, send)}
+      ${rows(state, send)}
+    </div>`
   }
 
-  this.viewList = ViewList({
-    className: 'data-grid-rows',
-    rowHeight: rowHeight,
-    eachrow: RowsComponent(rowsOptions),
-    readonly: true,
-    height: height
-  })
-
-  // Initialize Properties
-  var propertiesOptions = {
-    properties: state.properties,
-    onmouseover: state.onmouseover,
-    onmouseout: state.onmouseout,
-    onconfigure: state.onconfigure,
-    h: h
-  }
-
-  this.properties = PropertiesComponent(propertiesOptions)
+  return render
 }
 
-DataGrid.prototype.type = 'Widget'
+function createHeaders (options) {
+  var prefix = css`
+    :host {
+      white-space: nowrap;
+      margin: 0px;
+      padding: 0px;
+      height: 30px;
+    }
+  `
 
-DataGrid.prototype.init = function () {
-  var state = this.state
+  var header = createHeader(options)
 
-  this.Rows = this.viewList.render(state.data)
-  // HACK: Virtual-dom's diffing gets caught in infinite loop without key
-  this.Rows.key = Math.random()
+  function render (state, send) {
+    var props = state.properties
+    var keys = Object.keys(props)
 
-  var el = createElement(h('div#data-grid', [
-    this.properties,
-    this.Rows
-  ]))
+    function prop (key) {
+      return header(props[key], send)
+    }
 
-  return el
+    return el`<ul class="data-grid-headers ${prefix}">
+      ${keys.map(prop)}
+    </ul>`
+  }
+
+  return render
 }
 
-DataGrid.prototype.update = function (prev, el) {
-  var rowsDiff = diffRows(this.state, prev.state)
-  var propertiesDiff = diffProperties(this.state, prev.state)
+function createHeader (options) {
+  var prefix = css`
+    :host {
+      width: 150px;
+      height: 30px;
+      line-height: 30px;
+      padding: 0px 8px;
+      display: inline-block;
+      font-size: 15px;
+      list-style-type: none;
+      overflow-x: hidden;
+      font-weight: 700;
+      border-right: 1px solid #aaa;
+      border-bottom: 1px solid #888;
+      cursor: pointer;
+    }
+  `
 
-  var oldRows = el.querySelector('.data-grid-rows')
-  var newRows = createElement(this.viewList.render(this.state.data))
-  oldRows.parentElement.replaceChild(newRows, oldRows)
-
-  if (!this.state.activeRowKey && prev.state.activeRowKey) {
-    var prevActiveRow = newRows.querySelector('li[data-key="' + prev.state.activeRowKey + '"]')
-    if (prevActiveRow) newRows.scrollTop = prevActiveRow.offsetTop
+  function render (state, send) {
+    return el`<li class="data-grid-header ${prefix}">
+      <span class="data-grid-header-name">${state.name}</span>
+    </li>`
   }
 
-  if (this.state.activeRowKey) {
-    var activeRow = newRows.querySelector('.active')
-    if (activeRow) newRows.scrollTop = activeRow.offsetTop
-  }
-
-  if (propertiesDiff) {
-    var oldProperties = el.querySelector('.data-grid-properties')
-    var newProperties = createElement(PropertiesComponent(this.state))
-    oldProperties.parentElement.replaceChild(newProperties, oldProperties)
-  }
+  return render
 }
 
-DataGrid.prototype.destroy = function destroy (el) {}
+function createRows (options) {
+  var height = options.height || 300
+  var rowHeight = options.rowHeight || 30
+  var scrollTop = 0
+  var visibleStart = 0
+  var visibleEnd = 0
+  var displayStart = 0
+  var displayEnd = 0
 
-function diffRows (state, prev) {
-  var previousRowsState = {
-    data: prev.data,
-    activeRowKey: prev.activeRowKey,
-    activePropertyKey: prev.activePropertyKey
+  var prefix = css`
+    :host {
+      margin: 0px;
+      padding: 0px;
+      overflow-y: scroll;
+      position: absolute;
+      white-space: nowrap;
+      height: 100%;
+      margin-bottom: 30px;
+    }
+  `
+
+  function render (state, send) {
+    var section = slice(state.data, scrollTop)
+
+    function eachrow (data) {
+      return row(data, send)
+    }
+
+    function onscroll () {
+      var section = slice(state.data, this.scrollTop)
+      el.update(document.querySelector('.data-grid-rows'), element(section))
+    }
+
+    function element (rows) {
+      return el`<ul class="data-grid-rows ${prefix}" onscroll=${onscroll}>
+        ${toprow()}
+        ${rows.map(eachrow)}
+        ${bottomrow(rows.length)}
+      </div>`
+    }
+
+    return element(section)
   }
 
-  var newRowsState = {
-    data: state.data,
-    activeRowKey: state.activeRowKey,
-    activePropertyKey: state.activePropertyKey
+  function slice (rows, scrollTop) {
+    console.log('rows?', rows.length)
+    var total = rows.length
+    var rowsPerBody = Math.floor((height - 2) / rowHeight)
+    visibleStart = Math.round(Math.floor(scrollTop / rowHeight))
+    visibleEnd = Math.round(Math.min(visibleStart + rowsPerBody))
+    displayStart = Math.round(Math.max(0, Math.floor(scrollTop / rowHeight) - rowsPerBody * 1.5))
+    displayEnd = Math.round(Math.min(displayStart + 4 * rowsPerBody, total))
+    return rows.slice(displayStart, displayEnd)
   }
 
-  return diff(previousRowsState, newRowsState)
+  function toprow () {
+    var row = el`<li></li>`
+    domcss(row, {
+      height: displayStart * rowHeight,
+      listStyleType: 'none'
+    })
+    return row
+  }
+
+  function bottomrow (totalRows) {
+    var row = el`<li></li>`
+    domcss(row, {
+      height: (totalRows - displayEnd) * rowHeight,
+      listStyleType: 'none'
+    })
+    return row
+  }
+
+  return render
 }
 
-function diffProperties (state, prev) {
-  return diff(state.properties, prev.properties)
+function row (data, send) {
+  var prefix = css`
+    :host {
+      list-style-type: none;
+      height: 30px;
+    }
+  `
+
+  var cells = Object.keys(data.value)
+  function eachcell (key) {
+    return cell(data.value[key], send)
+  }
+
+  return el`<li class="data-grid-row ${prefix}">
+    ${cells.map(eachcell)}
+  </li>`
 }
 
-module.exports = DataGrid
+function cell (state, send) {
+  var prefix = css`
+    :host {
+      font-size: 12px;
+      border: 0px;
+      padding: 0px 8px;
+      margin: 0px;
+      width: 150px;
+      height: 30px;
+      max-height: 30px;
+      min-height: 30px;
+      line-height: 30px;
+      background: none;
+      resize: none;
+      overflow: hidden;
+      border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+    }
+  `
+
+  return el`<textarea class="data-grid-cell ${prefix}" value=${state} row=1>${state}</textarea>`
+}
