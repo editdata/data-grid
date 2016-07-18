@@ -93,7 +93,6 @@ function createRows (options) {
       position: absolute;
       white-space: nowrap;
       height: 100%;
-      margin-bottom: 30px;
     }
   `
 
@@ -103,7 +102,10 @@ function createRows (options) {
     }
 
     function element (section) {
-      return html`<ul class="data-grid-rows ${prefix}" onscroll=${onscroll}>
+      function onload (el) {
+        el.style.height = height + 'px'
+      }
+      return html`<ul class="data-grid-rows ${prefix}" onload=${onload} onscroll=${onscroll}>
         ${section.map(eachrow)}
       </div>`
     }
