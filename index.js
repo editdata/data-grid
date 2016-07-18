@@ -1,13 +1,9 @@
-var el = require('yo-yo')
+var html = require('yo-yo')
 var css = require('sheetify')
-var domcss = require('dom-css')
-
-/*
-* Experiment with yo-yo.js
-* Based on https://github.com/shama/csv-viewer
-*/
 
 module.exports = function createDataGrid (options) {
+  options = options || {}
+
   var headers = createHeaders(options)
   var rows = createRows(options)
 
@@ -20,14 +16,12 @@ module.exports = function createDataGrid (options) {
     }
   `
 
-  function render (state, send) {
-    return el`<div class="data-grid ${prefix}">
+  return function render (state, send) {
+    return html`<div class="data-grid ${prefix}">
       ${headers(state, send)}
       ${rows(state, send)}
     </div>`
   }
-
-  return render
 }
 
 function createHeaders (options) {
@@ -50,7 +44,7 @@ function createHeaders (options) {
       return header(props[key], send)
     }
 
-    return el`<ul class="data-grid-headers ${prefix}">
+    return html`<ul class="data-grid-headers ${prefix}">
       ${keys.map(prop)}
     </ul>`
   }
@@ -77,7 +71,7 @@ function createHeader (options) {
   `
 
   function render (state, send) {
-    return el`<li class="data-grid-header ${prefix}">
+    return html`<li class="data-grid-header ${prefix}">
       <span class="data-grid-header-name">${state.name}</span>
     </li>`
   }
@@ -88,11 +82,8 @@ function createHeader (options) {
 function createRows (options) {
   var height = options.height || 300
   var rowHeight = options.rowHeight || 30
-  var scrollTop = 0
-  var visibleStart = 0
-  var visibleEnd = 0
-  var displayStart = 0
-  var displayEnd = 0
+  var action = options.action
+  var error = options.error
 
   var prefix = css`
     :host {
@@ -107,55 +98,17 @@ function createRows (options) {
   `
 
   function render (state, send) {
-    var section = slice(state.data, scrollTop)
-
     function eachrow (data) {
       return row(data, send)
     }
 
-    function onscroll () {
-      var section = slice(state.data, this.scrollTop)
-      el.update(document.querySelector('.data-grid-rows'), element(section))
-    }
-
-    function element (rows) {
-      return el`<ul class="data-grid-rows ${prefix}" onscroll=${onscroll}>
-        ${toprow()}
-        ${rows.map(eachrow)}
-        ${bottomrow(rows.length)}
+    function element (section) {
+      return html`<ul class="data-grid-rows ${prefix}" onscroll=${onscroll}>
+        ${section.map(eachrow)}
       </div>`
     }
 
-    return element(section)
-  }
-
-  function slice (rows, scrollTop) {
-    console.log('rows?', rows.length)
-    var total = rows.length
-    var rowsPerBody = Math.floor((height - 2) / rowHeight)
-    visibleStart = Math.round(Math.floor(scrollTop / rowHeight))
-    visibleEnd = Math.round(Math.min(visibleStart + rowsPerBody))
-    displayStart = Math.round(Math.max(0, Math.floor(scrollTop / rowHeight) - rowsPerBody * 1.5))
-    displayEnd = Math.round(Math.min(displayStart + 4 * rowsPerBody, total))
-    return rows.slice(displayStart, displayEnd)
-  }
-
-  function toprow () {
-    var row = el`<li></li>`
-    domcss(row, {
-      height: displayStart * rowHeight,
-      listStyleType: 'none'
-    })
-    return row
-  }
-
-  function bottomrow (totalRows) {
-    var row = el`<li></li>`
-    domcss(row, {
-      height: (totalRows - displayEnd) * rowHeight,
-      listStyleType: 'none'
-    })
-    return row
+    return element(state.data)
   }
 
   return render
@@ -171,10 +124,10 @@ function row (data, send) {
 
   var cells = Object.keys(data.value)
   function eachcell (key) {
-    return cell(data.value[key], send)
+    return cell({ key: key, value: data.value[key] }, send)
   }
 
-  return el`<li class="data-grid-row ${prefix}">
+  return html`<li class="data-grid-row ${prefix}">
     ${cells.map(eachcell)}
   </li>`
 }
@@ -182,6 +135,7 @@ function row (data, send) {
 function cell (state, send) {
   var prefix = css`
     :host {
+      display: inline-block;
       font-size: 12px;
       border: 0px;
       padding: 0px 8px;
@@ -193,11 +147,28 @@ function cell (state, send) {
       line-height: 30px;
       background: none;
       resize: none;
-      overflow: hidden;
       border-right: 1px solid #ccc;
       border-bottom: 1px solid #ccc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
     }
   `
 
-  return el`<textarea class="data-grid-cell ${prefix}" value=${state} row=1>${state}</textarea>`
+  function oninput (e) {
+    send('input', { key: state.key, value: e.target.value })
+  }
+
+  function onclick (e) {
+    send('click', { key: state.key, value: e.target.value })
+  }
+
+  return html`<div 
+    class="data-grid-cell ${prefix}"
+    value=${state.value}
+    onclick=${onclick}
+    oninput=${oninput}
+    row="1"
+    >${state.value}</div>`
 }
