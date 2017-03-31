@@ -1,62 +1,87 @@
-var html = require('yo-yo')
+var html = require('bel')
 var css = require('sheetify')
+var infiniteElements = require('infinite-elements')
 
-module.exports = function createDataGrid (options) {
-  options = options || {}
+module.exports = function createGrid (options) {
+  var prefix = css`
+    :host {
+      position: relative;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    .data-grid-cell {
+      display: inline-block;
+      font-size: 12px;
+      border: 0px;
+      padding: 0px 8px;
+      margin: 0px;
+      width: 150px;
+      background: none;
+      resize: none;
+      border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+    }
+  `
 
   var headers = createHeaders(options)
   var rows = createRows(options)
 
-  var prefix = css`
-    :host {
-      height: 100%;
-      position: relative;
-      overflow-x: scroll;
-      overflow-y: hidden;
-    }
-  `
-
-  return function render (state, send) {
-    return html`<div class="data-grid ${prefix}">
-      ${headers(state, send)}
-      ${rows(state, send)}
+  return function render (state) {
+    var el = html`<div class="data-grid ${prefix}">
+      ${headers(state)}
+      ${rows(state)}
     </div>`
+    el.style.height = (options.height + options.rowHeight * 2) + 'px'
+    return el
   }
 }
 
 function createHeaders (options) {
+  var rowHeight = options.rowHeight
+
   var prefix = css`
     :host {
       white-space: nowrap;
       margin: 0px;
       padding: 0px;
-      height: 30px;
     }
   `
 
   var header = createHeader(options)
 
-  function render (state, send) {
+  function render (state) {
     var props = state.properties
     var keys = Object.keys(props)
 
     function prop (key) {
-      return header(props[key], send)
+      return header(props[key])
     }
 
-    return html`<ul class="data-grid-headers ${prefix}">
+    var el = html`<ul class="data-grid-headers ${prefix}">
       ${keys.map(prop)}
     </ul>`
+
+    el.style.height = rowHeight + 'px'
+    return el
   }
 
   return render
 }
 
 function createHeader (options) {
+  var rowHeight = options.rowHeight
+  var onClickHeader = options.onClickHeader || function () {}
+
   var prefix = css`
     :host {
       width: 150px;
-      height: 30px;
       line-height: 30px;
       padding: 0px 8px;
       display: inline-block;
@@ -70,20 +95,27 @@ function createHeader (options) {
     }
   `
 
-  function render (state, send) {
-    return html`<li class="data-grid-header ${prefix}">
-      <span class="data-grid-header-name">${state.name}</span>
-    </li>`
+  function render (state) {
+    function onclick (e) {
+      return onClickHeader(e, state)
+    }
+
+    var el =  html`<div class="data-grid-header ${prefix}" onclick=${onclick}>
+      <span class="data-grid-header-key">${state.name}</span>
+    </div>`
+
+    el.style.height = rowHeight + 'px'
+    return el
   }
 
   return render
 }
 
 function createRows (options) {
-  var height = options.height || 300
-  var rowHeight = options.rowHeight || 30
-  var action = options.action
-  var error = options.error
+  console.time('data-grid:createRows')
+  var height = options.height
+  var rowHeight = options.rowHeight
+  var onClickCell = options.onClickCell || function () {}
 
   var prefix = css`
     :host {
@@ -96,81 +128,54 @@ function createRows (options) {
     }
   `
 
-  function render (state, send) {
-    function eachrow (data) {
-      return row(data, send)
+  function row (data, index) {
+    var value = data.value
+    var cells = []
+    var keys = Object.keys(value)
+    var i = 0
+    var l = keys.length
+
+    for (i; i < l; i++) {
+      var key = keys[i]
+      var item = value[key]
+      cells[i] = cell({ key: key, value: value[key] }, data)
     }
 
-    function element (section) {
-      function onload (el) {
-        el.style.height = height + 'px'
-      }
-      return html`<ul class="data-grid-rows ${prefix}" onload=${onload} onscroll=${onscroll}>
-        ${section.map(eachrow)}
-      </div>`
+    var el = html`<div id="${data.key}" class="data-grid-row">
+      ${cells}
+    </div>`
+
+    el.style['list-style-type'] = 'none'
+    el.style.height = rowHeight + 'px'
+    return el
+  }
+
+  function cell (state, row) {
+    function onclick (e) {
+      return onClickCell(e, row, state)
     }
 
-    return element(state.data)
+    var el = html`<div id="${state.key}" class="data-grid-cell" onclick=${onclick}>
+      ${state.value}
+    </div>`
+
+    el.style.height = rowHeight + 'px'
+    el.style['line-height'] = rowHeight + 'px'
+    el.style['max-height'] = rowHeight + 'px'
+    el.style['min-height'] = rowHeight + 'px'
+    return el
+  }
+
+  options.class = prefix
+  options.eachRow = row
+  var renderElements = infiniteElements(options)
+
+  function render (state) {
+    var rows = state.data
+    var tree = renderElements(rows)
+    console.timeEnd('data-grid:createRows')
+    return tree
   }
 
   return render
-}
-
-function row (data, send) {
-  var prefix = css`
-    :host {
-      list-style-type: none;
-      height: 30px;
-    }
-  `
-
-  var cells = Object.keys(data.value)
-  function eachcell (key) {
-    return cell({ key: key, value: data.value[key] }, send)
-  }
-
-  return html`<li class="data-grid-row ${prefix}">
-    ${cells.map(eachcell)}
-  </li>`
-}
-
-function cell (state, send) {
-  var prefix = css`
-    :host {
-      display: inline-block;
-      font-size: 12px;
-      border: 0px;
-      padding: 0px 8px;
-      margin: 0px;
-      width: 150px;
-      height: 30px;
-      max-height: 30px;
-      min-height: 30px;
-      line-height: 30px;
-      background: none;
-      resize: none;
-      border-right: 1px solid #ccc;
-      border-bottom: 1px solid #ccc;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      -o-text-overflow: ellipsis;
-    }
-  `
-
-  function oninput (e) {
-    send('input', { key: state.key, value: e.target.value })
-  }
-
-  function onclick (e) {
-    send('click', { key: state.key, value: e.target.value })
-  }
-
-  return html`<div 
-    class="data-grid-cell ${prefix}"
-    value=${state.value}
-    onclick=${onclick}
-    oninput=${oninput}
-    row="1"
-    >${state.value}</div>`
 }

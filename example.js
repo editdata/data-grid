@@ -23,13 +23,9 @@ var send = require('send-action')({
 /*
 * Set up the action handler to modify state based on the actions triggered
 */
-function onaction (action, state) {
-  var type = action.type
-  console.log(action)
-  if (type === 'grid:input') {
-    return state
-  } else if (type === 'grid:click') {
-    return state
+function onaction (state, action, data) {
+  if (action === 'grid:click') {
+    console.log('clicked', state)
   } else {
     return state
   }
@@ -47,8 +43,28 @@ Create the grid
 */
 var grid = createGrid({
   height: window.innerHeight - 30,
-  action: send
+  rowHeight: 30,
+  onClickCell: onClickCell,
+  onClickHeader: onClickHeader
 })
+
+function onClickHeader (e, header) {
+  console.log('header', header)
+  console.log('event', e)
+  send('grid:click:header', {
+    header: header
+  })
+}
+
+function onClickCell (e, row, cell) {
+  console.log('cell', cell)
+  console.log('row', row)
+  console.log('event', e)
+  send('grid:click:cell', {
+    row:row,
+    cell:cell
+  })
+}
 
 /*
 * Render the html of the app with yo-yo
@@ -64,7 +80,7 @@ document.body.appendChild(render(send.state()))
 */
 function layout (state, send) {
   return html`<div id="app">
-    ${grid(state, send)}
+    ${grid(state)}
   </div>`
 }
 
